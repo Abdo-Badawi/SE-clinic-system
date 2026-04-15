@@ -1,1 +1,11 @@
 C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\AuthServiceApplication.java
+C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\client\DoctorServiceClient.java
+C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\client\PatientServiceClient.java
+C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\config\SecurityConfig.java
+C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\controller\AuthController.java
+C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\model\entity\User.java
+C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\repository\UserRepository.java
+C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\service\AuthService.java
+C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\service\impl\AuthServiceImpl.java
+C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\service\impl\UserServiceImpl.java
+C:\Users\abdob\Desktop\clinic\auth-service\src\main\java\com\clinic\auth\service\UserService.java

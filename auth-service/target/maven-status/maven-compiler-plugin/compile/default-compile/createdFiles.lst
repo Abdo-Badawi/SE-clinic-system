@@ -1,1 +1,13 @@
+com\clinic\auth\model\entity\User$UserRole.class
+com\clinic\auth\client\PatientServiceClient.class
 com\clinic\auth\AuthServiceApplication.class
+com\clinic\auth\client\DoctorServiceClient.class
+com\clinic\auth\config\SecurityConfig.class
+com\clinic\auth\repository\UserRepository.class
+com\clinic\auth\model\entity\User$UserBuilder.class
+com\clinic\auth\service\AuthService.class
+com\clinic\auth\model\entity\User.class
+com\clinic\auth\service\impl\UserServiceImpl.class
+com\clinic\auth\service\UserService.class
+com\clinic\auth\controller\AuthController.class
+com\clinic\auth\service\impl\AuthServiceImpl.class

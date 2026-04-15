@@ -50,12 +50,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public JwtResponse register(RegisterRequest request) {
-        // Check if email already exists
         if (userService.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Email is already taken");
         }
 
-        // Create user
         User user = User.builder()
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
@@ -65,42 +63,43 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         User savedUser = userService.createUser(user);
+        // Temporarily disabled for standalone testing
+log.info("Skipping profile creation for user {} (patient/doctor service not running)", savedUser.getId());
+// Create profile in appropriate service
+       
+    //     try {
+    //         if (savedUser.getRole() == User.UserRole.PATIENT) {
+    //             CreatePatientRequest patientRequest = CreatePatientRequest.builder()
+    //                     .userId(savedUser.getId())
+    //                     .email(savedUser.getEmail())
+    //                     .fullName(savedUser.getFullName())
+    //                     .phone(request.getPhone())
+    //                     .address(request.getAddress())
+    //                     .build();
+    //             patientServiceClient.createPatient(patientRequest);
+    //         } else if (savedUser.getRole() == User.UserRole.DOCTOR) {
+    //             CreateDoctorRequest doctorRequest = CreateDoctorRequest.builder()
+    //                     .userId(savedUser.getId())
+    //                     .email(savedUser.getEmail())
+    //                     .fullName(savedUser.getFullName())
+    //                     .specialization(request.getSpecialization())
+    //                     .build();
+    //             doctorServiceClient.createDoctor(doctorRequest);
+    //         }
+    //     } catch (Exception e) {
+    //         log.error("Failed to create profile for user {}: {}", savedUser.getId(), e.getMessage());
+    //         // In a real scenario you might use compensating transactions
+    //         throw new RuntimeException("User created but profile creation failed. Please contact admin.");
+    //     }
+ 
+    //     String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getId(), savedUser.getRole().name());
+    //     return new JwtResponse(token, "Bearer", savedUser.getId(), savedUser.getEmail(), savedUser.getFullName(), savedUser.getRole().name());
+    // }
 
-        // Based on role, call respective service to create profile
-        try {
-            if (savedUser.getRole() == User.UserRole.PATIENT) {
-                CreatePatientRequest patientRequest = CreatePatientRequest.builder()
-                        .userId(savedUser.getId())
-                        .email(savedUser.getEmail())
-                        .fullName(savedUser.getFullName())
-                        .phone(request.getPhone())
-                        .address(request.getAddress())
-                        .build();
-                patientServiceClient.createPatient(patientRequest);
-            } else if (savedUser.getRole() == User.UserRole.DOCTOR) {
-                CreateDoctorRequest doctorRequest = CreateDoctorRequest.builder()
-                        .userId(savedUser.getId())
-                        .email(savedUser.getEmail())
-                        .fullName(savedUser.getFullName())
-                        .specialization(request.getSpecialization())
-                        .build();
-                doctorServiceClient.createDoctor(doctorRequest);
-            }
-            // RECEPTIONIST and ADMIN don't need extra profiles
-        } catch (Exception e) {
-            log.error("Failed to create profile for user {}: {}", savedUser.getId(), e.getMessage());
-            // In production, you might want to rollback or use compensating transaction
-            throw new RuntimeException("User created but profile creation failed. Please contact admin.");
-        }
-
-        String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getId(), savedUser.getRole().name());
-        return new JwtResponse(token, "Bearer", savedUser.getId(), savedUser.getEmail(), savedUser.getFullName(), savedUser.getRole().name());
-    }
-
-    @Override
-    public void validateToken(String token) {
-        if (!jwtUtil.validateToken(token)) {
-            throw new UnauthorizedException("Invalid or expired token");
-        }
-    }
+    // @Override
+    // public void validateToken(String token) {
+    //     if (!jwtUtil.validateToken(token)) {
+    //         throw new UnauthorizedException("Invalid or expired token");
+    //     }
+    // }
 }

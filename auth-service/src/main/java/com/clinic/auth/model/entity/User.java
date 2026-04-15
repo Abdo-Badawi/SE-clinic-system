@@ -1,14 +1,13 @@
 package com.clinic.auth.model.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Builder.Default;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -37,7 +36,6 @@ public class User {
     private String fullName;
 
     @Column(name = "is_active")
-    @Default
     private Boolean isActive = true;
 
     @CreationTimestamp

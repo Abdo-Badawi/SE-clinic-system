@@ -8,7 +8,7 @@ spring:
     config:
       server:
         git:
-          uri: file://./clinic-config-repo
+          uri: file://../clinic-config-repo
           default-label: main
           clone-on-start: true
           skip-ssl-validation: true

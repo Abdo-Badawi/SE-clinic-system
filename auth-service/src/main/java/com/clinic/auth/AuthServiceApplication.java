@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"com.clinic.auth.client", "com.clinic.common"})
+@EnableFeignClients(basePackages = {"com.clinic.auth.client"})
 @ComponentScan(basePackages = {"com.clinic.auth", "com.clinic.common"})
 public class AuthServiceApplication {
     public static void main(String[] args) {

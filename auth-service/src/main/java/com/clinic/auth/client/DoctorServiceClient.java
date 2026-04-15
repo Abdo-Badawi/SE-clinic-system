@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "doctor-service", url = "${doctor.service.url:http://doctor-service}", configuration = FeignClientConfig.class)
 public interface DoctorServiceClient {
-
     @PostMapping("/api/doctors")
     DoctorResponse createDoctor(@RequestBody CreateDoctorRequest request);
 }

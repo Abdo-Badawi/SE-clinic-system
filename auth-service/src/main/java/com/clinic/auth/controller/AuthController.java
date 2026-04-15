@@ -7,11 +7,10 @@ import com.clinic.common.dto.request.LoginRequest;
 import com.clinic.common.dto.request.RegisterRequest;
 import com.clinic.common.dto.response.JwtResponse;
 import com.clinic.common.dto.response.UserResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,7 +32,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(request));
     }
 
-    // Internal endpoint for other services to validate token
     @GetMapping("/validate")
     public ResponseEntity<Void> validateToken(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
@@ -41,7 +39,6 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    // Internal endpoint to get user by ID (used by other services)
     @GetMapping("/internal/users/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
