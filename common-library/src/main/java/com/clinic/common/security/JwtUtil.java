@@ -18,33 +18,29 @@ import java.util.Map;
 @Slf4j
 public class JwtUtil {
 
-    @Value("${jwt.secret:clinicSecretKey2024}")
-    private String jwtSecret;
+    private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     @Value("${jwt.expiration:86400000}")
     private long jwtExpirationMs;
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        return key;
     }
 
     public String generateToken(String email, Long userId, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("role", role);
-        return createToken(claims, email);
-    }
 
-    private String createToken(Map<String, Object> claims, String subject) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
+        Date expiry = new Date(now.getTime() + jwtExpirationMs);
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(subject)
+                .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .setExpiration(expiry)
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -61,22 +57,32 @@ public class JwtUtil {
         }
     }
 
+    public String extractUsername(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    public Long extractUserId(String token) {
+        return getClaims(token).get("userId", Long.class);
+    }
+
+    public String extractRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
+
+    // Compatibility methods
     public String getEmailFromToken(String token) {
-        Claims claims = getAllClaimsFromToken(token);
-        return claims.getSubject();
+        return extractUsername(token);
     }
 
     public Long getUserIdFromToken(String token) {
-        Claims claims = getAllClaimsFromToken(token);
-        return claims.get("userId", Long.class);
+        return extractUserId(token);
     }
 
     public String getRoleFromToken(String token) {
-        Claims claims = getAllClaimsFromToken(token);
-        return claims.get("role", String.class);
+        return extractRole(token);
     }
 
-    private Claims getAllClaimsFromToken(String token) {
+    private Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()

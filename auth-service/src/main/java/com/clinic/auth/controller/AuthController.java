@@ -40,7 +40,7 @@ public class AuthController {
     }
 
     @GetMapping("/internal/users/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id) {
+    return ResponseEntity.ok(userService.getUserById(id));
+}
 }

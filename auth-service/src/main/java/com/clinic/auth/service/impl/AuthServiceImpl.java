@@ -5,8 +5,6 @@ import com.clinic.auth.client.PatientServiceClient;
 import com.clinic.auth.model.entity.User;
 import com.clinic.auth.service.AuthService;
 import com.clinic.auth.service.UserService;
-import com.clinic.common.dto.request.CreateDoctorRequest;
-import com.clinic.common.dto.request.CreatePatientRequest;
 import com.clinic.common.dto.request.LoginRequest;
 import com.clinic.common.dto.request.RegisterRequest;
 import com.clinic.common.dto.response.JwtResponse;
@@ -44,7 +42,8 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getRole().name());
-        return new JwtResponse(token, "Bearer", user.getId(), user.getEmail(), user.getFullName(), user.getRole().name());
+        return new JwtResponse(token, "Bearer", user.getId(), user.getEmail(),
+                user.getFullName(), user.getRole().name());
     }
 
     @Override
@@ -63,43 +62,48 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         User savedUser = userService.createUser(user);
-        // Temporarily disabled for standalone testing
-log.info("Skipping profile creation for user {} (patient/doctor service not running)", savedUser.getId());
-// Create profile in appropriate service
-       
-    //     try {
-    //         if (savedUser.getRole() == User.UserRole.PATIENT) {
-    //             CreatePatientRequest patientRequest = CreatePatientRequest.builder()
-    //                     .userId(savedUser.getId())
-    //                     .email(savedUser.getEmail())
-    //                     .fullName(savedUser.getFullName())
-    //                     .phone(request.getPhone())
-    //                     .address(request.getAddress())
-    //                     .build();
-    //             patientServiceClient.createPatient(patientRequest);
-    //         } else if (savedUser.getRole() == User.UserRole.DOCTOR) {
-    //             CreateDoctorRequest doctorRequest = CreateDoctorRequest.builder()
-    //                     .userId(savedUser.getId())
-    //                     .email(savedUser.getEmail())
-    //                     .fullName(savedUser.getFullName())
-    //                     .specialization(request.getSpecialization())
-    //                     .build();
-    //             doctorServiceClient.createDoctor(doctorRequest);
-    //         }
-    //     } catch (Exception e) {
-    //         log.error("Failed to create profile for user {}: {}", savedUser.getId(), e.getMessage());
-    //         // In a real scenario you might use compensating transactions
-    //         throw new RuntimeException("User created but profile creation failed. Please contact admin.");
-    //     }
- 
-    //     String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getId(), savedUser.getRole().name());
-    //     return new JwtResponse(token, "Bearer", savedUser.getId(), savedUser.getEmail(), savedUser.getFullName(), savedUser.getRole().name());
-    // }
 
-    // @Override
-    // public void validateToken(String token) {
-    //     if (!jwtUtil.validateToken(token)) {
-    //         throw new UnauthorizedException("Invalid or expired token");
-    //     }
-    // }
+        // Temporarily disabled for standalone testing
+        log.info("Skipping profile creation for user {} (patient/doctor service not running)",
+                savedUser.getId());
+
+        // TODO: Uncomment when patient/doctor services are ready
+        /*
+        try {
+            if (savedUser.getRole() == User.UserRole.PATIENT) {
+                CreatePatientRequest patientRequest = CreatePatientRequest.builder()
+                        .userId(savedUser.getId())
+                        .email(savedUser.getEmail())
+                        .fullName(savedUser.getFullName())
+                        .phone(request.getPhone())
+                        .address(request.getAddress())
+                        .build();
+                patientServiceClient.createPatient(patientRequest);
+            } else if (savedUser.getRole() == User.UserRole.DOCTOR) {
+                CreateDoctorRequest doctorRequest = CreateDoctorRequest.builder()
+                        .userId(savedUser.getId())
+                        .email(savedUser.getEmail())
+                        .fullName(savedUser.getFullName())
+                        .specialization(request.getSpecialization())
+                        .build();
+                doctorServiceClient.createDoctor(doctorRequest);
+            }
+        } catch (Exception e) {
+            log.error("Failed to create profile for user {}: {}", savedUser.getId(), e.getMessage());
+            throw new RuntimeException("User created but profile creation failed. Please contact admin.");
+        }
+        */
+
+        String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getId(),
+                savedUser.getRole().name());
+        return new JwtResponse(token, "Bearer", savedUser.getId(), savedUser.getEmail(),
+                savedUser.getFullName(), savedUser.getRole().name());
+    }
+
+    @Override
+    public void validateToken(String token) {
+        if (!jwtUtil.validateToken(token)) {
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+    }
 }
