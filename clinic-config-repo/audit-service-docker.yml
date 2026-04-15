@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: audit-service
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:h2:mem:auditdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+server:
+  port: 8086
+eureka:
+  client:
+    service-url:
+      default-zone: http://service-registry:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}

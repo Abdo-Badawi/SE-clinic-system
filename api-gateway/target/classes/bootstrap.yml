@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    config:
+      uri: http://localhost:8888
+      fail-fast: true
+      retry:
+        initial-interval: 1500
+        multiplier: 1.5
+        max-attempts: 10

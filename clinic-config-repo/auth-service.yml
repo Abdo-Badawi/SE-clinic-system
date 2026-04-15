@@ -1,0 +1,37 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/clinic_db?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+
+jwt:
+  secret: ${JWT_SECRET:clinicSecretKey2024}
+  expiration: 86400000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+patient:
+  service:
+    url: http://patient-service
+doctor:
+  service:
+    url: http://doctor-service
+
+logging:
+  level:
+    com.clinic.auth: DEBUG

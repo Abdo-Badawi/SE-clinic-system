@@ -1,0 +1,203 @@
+version: '3.8'
+
+services:
+  # Service Registry (Eureka)
+  service-registry:
+    image: openjdk:25-jdk
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_APPLICATION_NAME=service-registry
+      - SERVER_PORT=8761
+    volumes:
+      - ./service-registry/target:/app
+    working_dir: /app
+    command: >
+      bash -c "java -jar $(ls clinic-system-service-registry*.jar | head -1)"
+    networks:
+      - clinic-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/eureka/apps"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Config Server
+  config-server:
+    image: openjdk:25-jdk
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    environment:
+      - SPRING_APPLICATION_NAME=config-server
+      - SERVER_PORT=8888
+    volumes:
+      - ./config-server/target:/app
+      - ./clinic-config-repo:/config-repo
+    working_dir: /app
+    command: >
+      bash -c "java -jar $(ls clinic-system-config-server*.jar | head -1)"
+    networks:
+      - clinic-network
+    depends_on:
+      service-registry:
+        condition: service_healthy
+
+  # API Gateway
+  api-gateway:
+    image: openjdk:25-jdk
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_APPLICATION_NAME=api-gateway
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    volumes:
+      - ./api-gateway/target:/app
+    working_dir: /app
+    command: >
+      bash -c "java -jar $(ls clinic-system-api-gateway*.jar | head -1)"
+    networks:
+      - clinic-network
+    depends_on:
+      - service-registry
+      - config-server
+
+  # Auth Service
+  auth-service:
+    image: openjdk:25-jdk
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_APPLICATION_NAME=auth-service
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    volumes:
+      - ./auth-service/target:/app
+    working_dir: /app
+    command: >
+      bash -c "java -jar $(ls clinic-system-auth-service*.jar | head -1)"
+    networks:
+      - clinic-network
+    depends_on:
+      - service-registry
+      - config-server
+
+  # Patient Service
+  patient-service:
+    image: openjdk:25-jdk
+    container_name: patient-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_APPLICATION_NAME=patient-service
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    volumes:
+      - ./patient-service/target:/app
+    working_dir: /app
+    command: >
+      bash -c "java -jar $(ls clinic-system-patient-service*.jar | head -1)"
+    networks:
+      - clinic-network
+    depends_on:
+      - service-registry
+      - config-server
+
+  # Doctor Service
+  doctor-service:
+    image: openjdk:25-jdk
+    container_name: doctor-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_APPLICATION_NAME=doctor-service
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    volumes:
+      - ./doctor-service/target:/app
+    working_dir: /app
+    command: >
+      bash -c "java -jar $(ls clinic-system-doctor-service*.jar | head -1)"
+    networks:
+      - clinic-network
+    depends_on:
+      - service-registry
+      - config-server
+
+  # Appointment Service
+  appointment-service:
+    image: openjdk:25-jdk
+    container_name: appointment-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_APPLICATION_NAME=appointment-service
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    volumes:
+      - ./appointment-service/target:/app
+    working_dir: /app
+    command: >
+      bash -c "java -jar $(ls clinic-system-appointment-service*.jar | head -1)"
+    networks:
+      - clinic-network
+    depends_on:
+      - service-registry
+      - config-server
+
+  # Medical Record Service
+  medical-record-service:
+    image: openjdk:25-jdk
+    container_name: medical-record-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_APPLICATION_NAME=medical-record-service
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    volumes:
+      - ./medical-record-service/target:/app
+    working_dir: /app
+    command: >
+      bash -c "java -jar $(ls clinic-system-medical-record-service*.jar | head -1)"
+    networks:
+      - clinic-network
+    depends_on:
+      - service-registry
+      - config-server
+
+  # Audit Service
+  audit-service:
+    image: openjdk:25-jdk
+    container_name: audit-service
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_APPLICATION_NAME=audit-service
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    volumes:
+      - ./audit-service/target:/app
+    working_dir: /app
+    command: >
+      bash -c "java -jar $(ls clinic-system-audit-service*.jar | head -1)"
+    networks:
+      - clinic-network
+    depends_on:
+      - service-registry
+      - config-server
+
+networks:
+  clinic-network:
+    driver: bridge
