@@ -1,1 +1,10 @@
+com\clinic\audit\dto\AuditEvent$AuditEventBuilder.class
+com\clinic\audit\dto\AuditEvent.class
 com\clinic\audit\AuditServiceApplication.class
+com\clinic\audit\controller\AuditController.class
+com\clinic\audit\service\impl\AuditServiceImpl.class
+com\clinic\audit\repository\AuditLogRepository.class
+com\clinic\audit\config\SecurityConfig.class
+com\clinic\audit\model\entity\AuditLog$AuditLogBuilder.class
+com\clinic\audit\service\AuditService.class
+com\clinic\audit\model\entity\AuditLog.class

@@ -1,3 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
 jwt:
   secret: ThisIsAVeryLongSecretKeyForJWTThatIsAtLeast256BitsLongForHS256!!!
   expiration: 86400000
+
+eureka:
+  client:
+    enabled: false   # Set to true when using service discovery
+
+logging:
+  level:
+    com.clinic.gateway: DEBUG
+    org.springframework.cloud.gateway: DEBUG

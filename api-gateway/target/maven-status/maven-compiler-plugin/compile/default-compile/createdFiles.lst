@@ -1,1 +1,4 @@
+com\clinic\gateway\util\JwtUtil.class
+com\clinic\gateway\config\GatewayConfig.class
+com\clinic\gateway\filter\GatewayJwtFilter.class
 com\clinic\gateway\ApiGatewayApplication.class

@@ -54,12 +54,12 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = User.builder()
-                .email(request.getEmail())
-                .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .fullName(request.getFullName())
-                .role(User.UserRole.valueOf(request.getRole().toUpperCase()))
-                .isActive(true)
-                .build();
+        .email(request.getEmail())
+        .passwordHash(passwordEncoder.encode(request.getPassword()))
+        .fullName(request.getFullName())
+        .role(User.UserRole.PATIENT)   // ✅ Always PATIENT
+        .isActive(true)
+        .build();
 
         User savedUser = userService.createUser(user);
 

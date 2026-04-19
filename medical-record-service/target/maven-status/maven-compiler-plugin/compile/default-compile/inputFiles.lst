@@ -1,2 +1,15 @@
-C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medical\MedicalRecordServiceApplication.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\client\AppointmentClient.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\client\DoctorClient.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\client\PatientClient.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\config\FeignConfig.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\config\SecurityConfig.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\controller\MedicalRecordController.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\dto\request\MedicalRecordRequest.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\dto\request\UpdateMedicalRecordRequest.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\dto\response\AppointmentResponse.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\dto\response\MedicalRecordResponse.java
 C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\MedicalRecordServiceApplication.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\model\entity\MedicalRecord.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\repository\MedicalRecordRepository.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\service\impl\MedicalRecordServiceImpl.java
+C:\Users\abdob\Desktop\clinic\medical-record-service\src\main\java\com\clinic\medicalrecord\service\MedicalRecordService.java

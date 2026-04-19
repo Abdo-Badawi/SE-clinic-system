@@ -1,1 +1,8 @@
 C:\Users\abdob\Desktop\clinic\audit-service\src\main\java\com\clinic\audit\AuditServiceApplication.java
+C:\Users\abdob\Desktop\clinic\audit-service\src\main\java\com\clinic\audit\config\SecurityConfig.java
+C:\Users\abdob\Desktop\clinic\audit-service\src\main\java\com\clinic\audit\controller\AuditController.java
+C:\Users\abdob\Desktop\clinic\audit-service\src\main\java\com\clinic\audit\dto\AuditEvent.java
+C:\Users\abdob\Desktop\clinic\audit-service\src\main\java\com\clinic\audit\model\entity\AuditLog.java
+C:\Users\abdob\Desktop\clinic\audit-service\src\main\java\com\clinic\audit\repository\AuditLogRepository.java
+C:\Users\abdob\Desktop\clinic\audit-service\src\main\java\com\clinic\audit\service\AuditService.java
+C:\Users\abdob\Desktop\clinic\audit-service\src\main\java\com\clinic\audit\service\impl\AuditServiceImpl.java

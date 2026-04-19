@@ -1,1 +1,4 @@
 C:\Users\abdob\Desktop\clinic\api-gateway\src\main\java\com\clinic\gateway\ApiGatewayApplication.java
+C:\Users\abdob\Desktop\clinic\api-gateway\src\main\java\com\clinic\gateway\config\GatewayConfig.java
+C:\Users\abdob\Desktop\clinic\api-gateway\src\main\java\com\clinic\gateway\filter\GatewayJwtFilter.java
+C:\Users\abdob\Desktop\clinic\api-gateway\src\main\java\com\clinic\gateway\util\JwtUtil.java

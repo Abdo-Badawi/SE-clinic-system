@@ -25,35 +25,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-        try {
-            String jwt = parseJwt(request);
-            if (jwt != null && jwtUtil.validateToken(jwt)) {
-                String username = jwtUtil.extractUsername(jwt);      // ✅ fixed
-                String role = jwtUtil.extractRole(jwt);            // ✅ fixed
-                Long userId = jwtUtil.extractUserId(jwt);
+protected void doFilterInternal(HttpServletRequest request,
+                                HttpServletResponse response,
+                                FilterChain filterChain) throws ServletException, IOException {
+    try {
+        String jwt = parseJwt(request);
+        log.debug("JWT token from request: {}", jwt != null ? "present" : "missing");
+        
+        if (jwt != null && jwtUtil.validateToken(jwt)) {
+            String username = jwtUtil.extractUsername(jwt);
+            String role = jwtUtil.extractRole(jwt);
+            Long userId = jwtUtil.extractUserId(jwt);
+            
+            log.info("JWT validated for user: {}, role: {}, userId: {}", username, role, userId);
 
-                // Set attributes for downstream use
-                request.setAttribute("userId", userId);
-                request.setAttribute("username", username);
-                request.setAttribute("role", role);
+            request.setAttribute("userId", userId);
+            request.setAttribute("username", username);
+            request.setAttribute("role", role);
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                username,
-                                null,
-                                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
-                        );
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception e) {
-            log.error("Cannot set user authentication: {}", e.getMessage());
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            username,
+                            null,
+                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.debug("Authentication set in SecurityContext");
+        } else {
+            log.debug("JWT invalid or missing, proceeding without authentication");
         }
-        filterChain.doFilter(request, response);
+    } catch (Exception e) {
+        log.error("Cannot set user authentication: {}", e.getMessage(), e);
     }
+    filterChain.doFilter(request, response);
+}
 
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");

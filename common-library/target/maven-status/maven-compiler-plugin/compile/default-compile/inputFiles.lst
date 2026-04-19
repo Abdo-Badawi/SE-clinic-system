@@ -9,6 +9,8 @@ C:\Users\abdob\Desktop\clinic\common-library\src\main\java\com\clinic\common\dto
 C:\Users\abdob\Desktop\clinic\common-library\src\main\java\com\clinic\common\dto\response\PatientResponse.java
 C:\Users\abdob\Desktop\clinic\common-library\src\main\java\com\clinic\common\dto\response\UserResponse.java
 C:\Users\abdob\Desktop\clinic\common-library\src\main\java\com\clinic\common\exception\BadRequestException.java
+C:\Users\abdob\Desktop\clinic\common-library\src\main\java\com\clinic\common\exception\CustomException.java
+C:\Users\abdob\Desktop\clinic\common-library\src\main\java\com\clinic\common\exception\ForbiddenException.java
 C:\Users\abdob\Desktop\clinic\common-library\src\main\java\com\clinic\common\exception\ResourceNotFoundException.java
 C:\Users\abdob\Desktop\clinic\common-library\src\main\java\com\clinic\common\exception\UnauthorizedException.java
 C:\Users\abdob\Desktop\clinic\common-library\src\main\java\com\clinic\common\security\JwtAuthenticationFilter.java

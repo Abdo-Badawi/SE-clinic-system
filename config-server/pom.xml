@@ -9,6 +9,7 @@
         <groupId>com.clinic</groupId>
         <artifactId>clinic-system</artifactId>
         <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>config-server</artifactId>
@@ -26,7 +27,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <!-- Eureka Client (optional but useful) -->
+        <!-- Eureka Client (optional, for discovery) -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
