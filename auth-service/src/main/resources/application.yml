@@ -19,7 +19,7 @@ spring:
     show-sql: true
 
 jwt:
-  secret: clinicSecretKey2024
+  secret: ThisIsAVeryLongSecretKeyForJWTThatIsAtLeast256BitsLongForHS256!!!
   expiration: 86400000
 
 eureka:

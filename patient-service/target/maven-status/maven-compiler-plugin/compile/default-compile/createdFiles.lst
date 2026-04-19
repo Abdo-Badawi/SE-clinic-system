@@ -1,1 +1,15 @@
+com\clinic\patient\dto\request\CreatePatientRequest$CreatePatientRequestBuilder.class
+com\clinic\patient\config\SecurityConfig.class
+com\clinic\patient\dto\request\UpdatePatientRequest$UpdatePatientRequestBuilder.class
+com\clinic\patient\dto\response\PatientResponse$PatientResponseBuilder.class
+com\clinic\patient\client\AuthClient.class
+com\clinic\patient\model\entity\Patient.class
+com\clinic\patient\repository\PatientRepository.class
+com\clinic\patient\service\PatientService.class
+com\clinic\patient\dto\request\CreatePatientRequest.class
 com\clinic\patient\PatientServiceApplication.class
+com\clinic\patient\dto\request\UpdatePatientRequest.class
+com\clinic\patient\service\impl\PatientServiceImpl.class
+com\clinic\patient\controller\PatientController.class
+com\clinic\patient\model\entity\Patient$PatientBuilder.class
+com\clinic\patient\dto\response\PatientResponse.class

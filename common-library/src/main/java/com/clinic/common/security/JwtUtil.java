@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,13 +19,15 @@ import java.util.Map;
 @Slf4j
 public class JwtUtil {
 
-    private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     @Value("${jwt.expiration:86400000}")
     private long jwtExpirationMs;
 
     private SecretKey getSigningKey() {
-        return key;
+        // Use the secret string directly as bytes (must be at least 256 bits)
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String email, Long userId, String role) {
@@ -40,7 +43,7 @@ public class JwtUtil {
                 .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .signWith(getSigningKey())
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -67,19 +70,6 @@ public class JwtUtil {
 
     public String extractRole(String token) {
         return getClaims(token).get("role", String.class);
-    }
-
-    // Compatibility methods
-    public String getEmailFromToken(String token) {
-        return extractUsername(token);
-    }
-
-    public Long getUserIdFromToken(String token) {
-        return extractUserId(token);
-    }
-
-    public String getRoleFromToken(String token) {
-        return extractRole(token);
     }
 
     private Claims getClaims(String token) {

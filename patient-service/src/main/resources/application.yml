@@ -1,3 +1,24 @@
-# This file is intentionally minimal.
-# All real configuration comes from Config Server.
-# You can add local development overrides here if needed.
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/clinic_db?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+auth:
+  service:
+    url: http://localhost:8081
+
+eureka:
+  client:
+    enabled: false
+
+jwt:
+  secret: ThisIsAVeryLongSecretKeyForJWTThatIsAtLeast256BitsLongForHS256!!!
+  expiration: 86400000

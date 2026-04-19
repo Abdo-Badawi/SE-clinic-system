@@ -1,1 +1,11 @@
+C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\client\AuthClient.java
+C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\config\SecurityConfig.java
+C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\controller\DoctorController.java
 C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\DoctorServiceApplication.java
+C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\dto\request\CreateDoctorRequest.java
+C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\dto\request\UpdateDoctorRequest.java
+C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\dto\response\DoctorResponse.java
+C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\model\entity\Doctor.java
+C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\repository\DoctorRepository.java
+C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\service\DoctorService.java
+C:\Users\abdob\Desktop\clinic\doctor-service\src\main\java\com\clinic\doctor\service\impl\DoctorServiceImpl.java

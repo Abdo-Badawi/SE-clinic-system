@@ -1,1 +1,11 @@
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\client\AuthClient.java
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\config\SecurityConfig.java
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\controller\PatientController.java
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\dto\request\CreatePatientRequest.java
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\dto\request\UpdatePatientRequest.java
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\dto\response\PatientResponse.java
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\model\entity\Patient.java
 C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\PatientServiceApplication.java
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\repository\PatientRepository.java
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\service\impl\PatientServiceImpl.java
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\service\PatientService.java

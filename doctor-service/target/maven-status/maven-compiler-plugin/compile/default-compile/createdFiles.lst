@@ -1,1 +1,15 @@
+com\clinic\doctor\controller\DoctorController.class
+com\clinic\doctor\service\impl\DoctorServiceImpl.class
+com\clinic\doctor\config\SecurityConfig.class
+com\clinic\doctor\repository\DoctorRepository.class
+com\clinic\doctor\client\AuthClient.class
+com\clinic\doctor\dto\response\DoctorResponse$DoctorResponseBuilder.class
+com\clinic\doctor\service\DoctorService.class
+com\clinic\doctor\model\entity\Doctor$DoctorBuilder.class
+com\clinic\doctor\dto\response\DoctorResponse.class
+com\clinic\doctor\dto\request\UpdateDoctorRequest.class
+com\clinic\doctor\dto\request\CreateDoctorRequest.class
+com\clinic\doctor\model\entity\Doctor.class
 com\clinic\doctor\DoctorServiceApplication.class
+com\clinic\doctor\dto\request\CreateDoctorRequest$CreateDoctorRequestBuilder.class
+com\clinic\doctor\dto\request\UpdateDoctorRequest$UpdateDoctorRequestBuilder.class
