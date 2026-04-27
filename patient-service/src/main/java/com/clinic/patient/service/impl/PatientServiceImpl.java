@@ -28,16 +28,16 @@ public class PatientServiceImpl implements PatientService {
     @Loggable
     public PatientResponse createPatient(CreatePatientRequest request) {
         // Validate user exists in auth-service
-        try {
-            authClient.getUserById(request.getUserId());
-        } catch (Exception e) {
-            log.error("User with ID {} not found in auth-service", request.getUserId());
-            throw new BadRequestException("User with ID " + request.getUserId() + " does not exist.");
-        }
+        // try {
+        //     authClient.getUserById(request.getUserId());
+        // } catch (Exception e) {
+        //     log.error("User with ID {} not found in auth-service", request.getUserId());
+        //     throw new BadRequestException("User with ID " + request.getUserId() + " does not exist.");
+        // }
 
         if (patientRepository.existsById(request.getUserId())) {
-            throw new BadRequestException("Patient profile already exists for user ID: " + request.getUserId());
-        }
+        throw new BadRequestException("Patient profile already exists for user ID: " + request.getUserId());
+    }
 
         Patient patient = Patient.builder()
                 .id(request.getUserId())

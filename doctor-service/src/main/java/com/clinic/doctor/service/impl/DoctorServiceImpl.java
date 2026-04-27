@@ -31,12 +31,12 @@ public class DoctorServiceImpl implements DoctorService {
     @Loggable
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
         // Validate user exists in auth-service
-        try {
-            authClient.getUserById(request.getUserId());
-        } catch (Exception e) {
-            log.error("User with ID {} not found in auth-service", request.getUserId());
-            throw new BadRequestException("User with ID " + request.getUserId() + " does not exist.");
-        }
+        // try {
+        //     authClient.getUserById(request.getUserId());
+        // } catch (Exception e) {
+        //     log.error("User with ID {} not found in auth-service", request.getUserId());
+        //     throw new BadRequestException("User with ID " + request.getUserId() + " does not exist.");
+        // }
 
         if (doctorRepository.existsById(request.getUserId())) {
             throw new BadRequestException("Doctor profile already exists for user ID: " + request.getUserId());

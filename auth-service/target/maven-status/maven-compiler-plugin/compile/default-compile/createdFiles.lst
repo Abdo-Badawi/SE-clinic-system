@@ -8,6 +8,7 @@ com\clinic\auth\model\entity\User$UserBuilder.class
 com\clinic\auth\service\AuthService.class
 com\clinic\auth\model\entity\User.class
 com\clinic\auth\service\impl\UserServiceImpl.class
+com\clinic\auth\config\FeignConfig.class
 com\clinic\auth\service\UserService.class
 com\clinic\auth\controller\AuthController.class
 com\clinic\auth\service\impl\AuthServiceImpl.class

@@ -25,9 +25,8 @@ public class RegisterRequest {
     
     @NotBlank(message = "Full name cannot be blank")
     private String fullName;
-    
-    @NotBlank(message = "Role cannot be blank")
-    private String role; // ADMIN, DOCTOR, PATIENT, RECEPTIONIST
+
+     private String role;
     
     // Additional fields based on role
     private String phone;

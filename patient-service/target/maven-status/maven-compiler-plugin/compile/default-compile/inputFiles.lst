@@ -1,4 +1,5 @@
 C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\client\AuthClient.java
+C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\config\FeignConfig.java
 C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\config\SecurityConfig.java
 C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\controller\PatientController.java
 C:\Users\abdob\Desktop\clinic\patient-service\src\main\java\com\clinic\patient\dto\request\CreatePatientRequest.java
