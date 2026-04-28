@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class DoctorResponse {
     private Long id;
     private String specialization;
+      private Boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -24,6 +24,9 @@ public class Doctor {
     @Column(name = "specialization")
     private String specialization;
 
+    @Column(name = "is_active")          // ✅ new field
+    private Boolean isActive = true;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

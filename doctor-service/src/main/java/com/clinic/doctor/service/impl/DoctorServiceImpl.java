@@ -31,12 +31,12 @@ public class DoctorServiceImpl implements DoctorService {
     @Loggable
     public DoctorResponse createDoctor(CreateDoctorRequest request) {
         // Validate user exists in auth-service
-        // try {
-        //     authClient.getUserById(request.getUserId());
-        // } catch (Exception e) {
-        //     log.error("User with ID {} not found in auth-service", request.getUserId());
-        //     throw new BadRequestException("User with ID " + request.getUserId() + " does not exist.");
-        // }
+        try {
+            authClient.getUserById(request.getUserId());
+        } catch (Exception e) {
+            log.error("User with ID {} not found in auth-service", request.getUserId());
+            throw new BadRequestException("User with ID " + request.getUserId() + " does not exist.");
+        }
 
         if (doctorRepository.existsById(request.getUserId())) {
             throw new BadRequestException("Doctor profile already exists for user ID: " + request.getUserId());
@@ -60,11 +60,16 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<DoctorResponse> getAllDoctors() {
-        return doctorRepository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-    }
+public List<DoctorResponse> getAllDoctors() {
+    List<Object[]> rows = doctorRepository.findDoctorsWithUserStatus();
+    return rows.stream()
+            .map(row -> DoctorResponse.builder()
+                    .id(((Number) row[0]).longValue())
+                    .specialization((String) row[1])
+                    .isActive((Boolean) row[2])   // user's active status
+                    .build())
+            .collect(Collectors.toList());
+}
 
     @Override
     @Transactional
@@ -82,21 +87,25 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    @Transactional
-    public void deleteDoctor(Long id) {
-        if (!doctorRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Doctor", "id", id);
-        }
-        doctorRepository.deleteById(id);
-        log.info("Doctor profile deleted for user ID: {}", id);
+@Transactional
+public void deleteDoctor(Long id) {
+    // Deactivate doctor
+    if (!doctorRepository.existsById(id)) {
+        throw new ResourceNotFoundException("Doctor", "id", id);
     }
+    doctorRepository.deactivateUser(id);
+
+    // Deactivate corresponding user directly
+    doctorRepository.deactivateUser(id);
+
+    log.info("Doctor deactivated: ID {}", id);
+}
 
     private DoctorResponse mapToResponse(Doctor doctor) {
         return DoctorResponse.builder()
                 .id(doctor.getId())
                 .specialization(doctor.getSpecialization())
-                .createdAt(doctor.getCreatedAt())
-                .updatedAt(doctor.getUpdatedAt())
+                .isActive(doctor.getIsActive()) 
                 .build();
     }
 }

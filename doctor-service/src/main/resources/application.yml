@@ -8,7 +8,7 @@ spring:
     password: 1234
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: true
 
 jwt:
@@ -26,3 +26,5 @@ eureka:
 logging:
   level:
     com.clinic.doctor: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
