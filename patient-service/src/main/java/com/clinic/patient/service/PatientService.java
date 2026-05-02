@@ -8,5 +8,6 @@ public interface PatientService {
     PatientResponse createPatient(CreatePatientRequest request);
     PatientResponse getPatientById(Long id);
     PatientResponse updatePatient(Long id, UpdatePatientRequest request);
+    java.util.List<PatientResponse> getAllPatients();
     void deletePatient(Long id);
 }

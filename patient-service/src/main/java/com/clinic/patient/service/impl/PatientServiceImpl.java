@@ -12,6 +12,9 @@ import com.clinic.patient.repository.PatientRepository;
 import com.clinic.patient.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,5 +100,12 @@ public class PatientServiceImpl implements PatientService {
                 .createdAt(patient.getCreatedAt())
                 .updatedAt(patient.getUpdatedAt())
                 .build();
+    }
+
+    @Override
+    public List<PatientResponse> getAllPatients() {
+        return patientRepository.findAll().stream()
+                .map(this::mapToResponse)  // Reuse the existing mapper
+                .toList();
     }
 }

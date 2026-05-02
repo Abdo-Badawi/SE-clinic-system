@@ -7,6 +7,9 @@ import com.clinic.patient.dto.response.PatientResponse;
 import com.clinic.patient.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,4 +44,10 @@ public class PatientController {
         patientService.deletePatient(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/")
+    public ResponseEntity<List<PatientResponse>> getAllPatients() {
+        return ResponseEntity.ok(patientService.getAllPatients());
+    }
+
 }
