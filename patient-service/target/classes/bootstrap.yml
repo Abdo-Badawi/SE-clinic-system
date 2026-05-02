@@ -1,6 +1,6 @@
 spring:
   application:
-    name: appointment-service
+    name: patient-service
   cloud:
     config:
       enabled: false

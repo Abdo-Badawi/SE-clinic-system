@@ -2,6 +2,7 @@ package com.clinic.appointment.controller;
 
 import com.clinic.appointment.dto.request.AppointmentRequest;
 import com.clinic.appointment.dto.request.AvailableSlotsRequest;
+import com.clinic.appointment.dto.request.CancelAppointmentRequest;
 import com.clinic.appointment.dto.request.UpdateAppointmentStatusRequest;
 import com.clinic.appointment.dto.response.AppointmentResponse;
 import com.clinic.appointment.dto.response.AvailableSlotResponse;
@@ -28,7 +29,8 @@ public class AppointmentController {
 
     @PostMapping
     @Loggable
-   // @PreAuthorize("hasRole('RECEPTIONIST') or hasRole('ADMIN') or hasRole('PATIENT')")
+    // @PreAuthorize("hasRole('RECEPTIONIST') or hasRole('ADMIN') or
+    // hasRole('PATIENT')")
     public ResponseEntity<AppointmentResponse> createAppointment(
             @Valid @RequestBody AppointmentRequest request,
             HttpServletRequest httpRequest) {
@@ -43,7 +45,8 @@ public class AppointmentController {
 
     @GetMapping("/patient/{patientId}")
     @PreAuthorize("hasRole('PATIENT') and #patientId == authentication.principal.id or hasRole('RECEPTIONIST') or hasRole('ADMIN')")
-    public ResponseEntity<List<AppointmentResponse>> getAppointmentsByPatient(@PathVariable("patientId") Long patientId) {
+    public ResponseEntity<List<AppointmentResponse>> getAppointmentsByPatient(
+            @PathVariable("patientId") Long patientId) {
         return ResponseEntity.ok(appointmentService.getAppointmentsByPatient(patientId));
     }
 
@@ -74,10 +77,10 @@ public class AppointmentController {
     @PreAuthorize("hasRole('RECEPTIONIST') or hasRole('ADMIN') or hasRole('PATIENT')")
     public ResponseEntity<AppointmentResponse> cancelAppointment(
             @PathVariable("id") Long id,
-            @RequestParam String reason,
+            @Valid @RequestBody CancelAppointmentRequest request,
             HttpServletRequest httpRequest) {
         Long cancelledBy = (Long) httpRequest.getAttribute("userId");
-        return ResponseEntity.ok(appointmentService.cancelAppointment(id, reason, cancelledBy));
+        return ResponseEntity.ok(appointmentService.cancelAppointment(id, request.getReason(), cancelledBy));
     }
 
     @PostMapping("/available-slots")

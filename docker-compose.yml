@@ -1,202 +1,193 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  # Service Registry (Eureka)
-  service-registry:
-    image: openjdk:25-jdk
-    container_name: service-registry
+
+  mysql:
+    image: mysql:8.0
+    container_name: clinic-mysql
     ports:
-      - "8761:8761"
+      - "3307:3306"
     environment:
-      - SPRING_APPLICATION_NAME=service-registry
-      - SERVER_PORT=8761
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: clinic_db
+      MYSQL_USER: clinic_user
+      MYSQL_PASSWORD: clinic_pass
     volumes:
-      - ./service-registry/target:/app
-    working_dir: /app
-    command: >
-      bash -c "java -jar $(ls clinic-system-service-registry*.jar | head -1)"
+      - mysql_data:/var/lib/mysql
     networks:
       - clinic-network
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/eureka/apps"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uclinic_user", "-pclinic_pass"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
 
-  # Config Server
-  config-server:
-    image: openjdk:25-jdk
-    container_name: config-server
-    ports:
-      - "8888:8888"
-    environment:
-      - SPRING_APPLICATION_NAME=config-server
-      - SERVER_PORT=8888
-    volumes:
-      - ./config-server/target:/app
-      - ./clinic-config-repo:/config-repo
-    working_dir: /app
-    command: >
-      bash -c "java -jar $(ls clinic-system-config-server*.jar | head -1)"
-    networks:
-      - clinic-network
-    depends_on:
-      service-registry:
-        condition: service_healthy
-
-  # API Gateway
-  api-gateway:
-    image: openjdk:25-jdk
-    container_name: api-gateway
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_APPLICATION_NAME=api-gateway
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
-    volumes:
-      - ./api-gateway/target:/app
-    working_dir: /app
-    command: >
-      bash -c "java -jar $(ls clinic-system-api-gateway*.jar | head -1)"
-    networks:
-      - clinic-network
-    depends_on:
-      - service-registry
-      - config-server
-
-  # Auth Service
   auth-service:
-    image: openjdk:25-jdk
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: auth-service
     container_name: auth-service
     ports:
       - "8081:8081"
     environment:
-      - SPRING_APPLICATION_NAME=auth-service
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
-    volumes:
-      - ./auth-service/target:/app
-    working_dir: /app
-    command: >
-      bash -c "java -jar $(ls clinic-system-auth-service*.jar | head -1)"
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      PATIENT_SERVICE_URL: http://patient-service:8082
+      DOCTOR_SERVICE_URL: http://doctor-service:8083
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - clinic-network
-    depends_on:
-      - service-registry
-      - config-server
+    restart: unless-stopped
 
-  # Patient Service
   patient-service:
-    image: openjdk:25-jdk
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: patient-service
     container_name: patient-service
     ports:
       - "8082:8082"
     environment:
-      - SPRING_APPLICATION_NAME=patient-service
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
-    volumes:
-      - ./patient-service/target:/app
-    working_dir: /app
-    command: >
-      bash -c "java -jar $(ls clinic-system-patient-service*.jar | head -1)"
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      AUTH_SERVICE_URL: http://auth-service:8081
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - clinic-network
-    depends_on:
-      - service-registry
-      - config-server
+    restart: unless-stopped
 
-  # Doctor Service
   doctor-service:
-    image: openjdk:25-jdk
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: doctor-service
     container_name: doctor-service
     ports:
       - "8083:8083"
     environment:
-      - SPRING_APPLICATION_NAME=doctor-service
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
-    volumes:
-      - ./doctor-service/target:/app
-    working_dir: /app
-    command: >
-      bash -c "java -jar $(ls clinic-system-doctor-service*.jar | head -1)"
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      AUTH_SERVICE_URL: http://auth-service:8081
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - clinic-network
-    depends_on:
-      - service-registry
-      - config-server
+    restart: unless-stopped
 
-  # Appointment Service
   appointment-service:
-    image: openjdk:25-jdk
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: appointment-service
     container_name: appointment-service
     ports:
       - "8084:8084"
     environment:
-      - SPRING_APPLICATION_NAME=appointment-service
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
-    volumes:
-      - ./appointment-service/target:/app
-    working_dir: /app
-    command: >
-      bash -c "java -jar $(ls clinic-system-appointment-service*.jar | head -1)"
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      PATIENT_SERVICE_URL: http://patient-service:8082
+      DOCTOR_SERVICE_URL: http://doctor-service:8083
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - clinic-network
-    depends_on:
-      - service-registry
-      - config-server
+    restart: unless-stopped
 
-  # Medical Record Service
   medical-record-service:
-    image: openjdk:25-jdk
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: medical-record-service
     container_name: medical-record-service
     ports:
       - "8085:8085"
     environment:
-      - SPRING_APPLICATION_NAME=medical-record-service
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
-    volumes:
-      - ./medical-record-service/target:/app
-    working_dir: /app
-    command: >
-      bash -c "java -jar $(ls clinic-system-medical-record-service*.jar | head -1)"
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      PATIENT_SERVICE_URL: http://patient-service:8082
+      DOCTOR_SERVICE_URL: http://doctor-service:8083
+      APPOINTMENT_SERVICE_URL: http://appointment-service:8084
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - clinic-network
-    depends_on:
-      - service-registry
-      - config-server
+    restart: unless-stopped
 
-  # Audit Service
   audit-service:
-    image: openjdk:25-jdk
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: audit-service
     container_name: audit-service
     ports:
       - "8086:8086"
     environment:
-      - SPRING_APPLICATION_NAME=audit-service
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
-    volumes:
-      - ./audit-service/target:/app
-    working_dir: /app
-    command: >
-      bash -c "java -jar $(ls clinic-system-audit-service*.jar | head -1)"
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - clinic-network
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8081
+      PATIENT_SERVICE_URL: http://patient-service:8082
+      DOCTOR_SERVICE_URL: http://doctor-service:8083
+      APPOINTMENT_SERVICE_URL: http://appointment-service:8084
+      MEDICAL_RECORD_SERVICE_URL: http://medical-record-service:8085
+      AUDIT_SERVICE_URL: http://audit-service:8086
     depends_on:
-      - service-registry
-      - config-server
+      - auth-service
+      - patient-service
+      - doctor-service
+      - appointment-service
+      - medical-record-service
+      - audit-service
+    networks:
+      - clinic-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
 
 networks:
   clinic-network:

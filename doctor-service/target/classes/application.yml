@@ -3,12 +3,12 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/clinic_db?useSSL=false&serverTimezone=UTC
-    username: root
-    password: 1234
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/clinic_db?useSSL=false&serverTimezone=UTC}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:1234}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     show-sql: true
 
 jwt:
@@ -17,7 +17,7 @@ jwt:
 
 auth:
   service:
-    url: http://localhost:8081
+    url: ${AUTH_SERVICE_URL:http://localhost:8081}
 
 eureka:
   client:
@@ -26,5 +26,3 @@ eureka:
 logging:
   level:
     com.clinic.doctor: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
