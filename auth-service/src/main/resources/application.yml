@@ -1,0 +1,39 @@
+server:
+  port: 8081
+  error:
+    include-message: always
+    include-exception: true
+    include-stacktrace: always
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/clinic_db?useSSL=false&serverTimezone=UTC}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:1234}
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+
+jwt:
+  secret: ThisIsAVeryLongSecretKeyForJWTThatIsAtLeast256BitsLongForHS256!!!
+  expiration: 86400000
+
+eureka:
+  client:
+    enabled: false
+
+patient:
+  service:
+    url: ${PATIENT_SERVICE_URL:http://localhost:8082}
+doctor:
+  service:
+    url: ${DOCTOR_SERVICE_URL:http://localhost:8083}
+
+logging:
+  level:
+    "[org.springframework.security]": TRACE
+    "[com.clinic.auth]": DEBUG

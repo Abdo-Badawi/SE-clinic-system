@@ -1,0 +1,83 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+  "label": "RUN ALL MICROSERVICES",
+  "dependsOn": [
+    "config-server",
+    "service-registry",
+    "api-gateway",
+    "auth-service",
+    "patient-service",
+    "doctor-service",
+    "appointment-service",
+    "medical-record-service",
+    "audit-service"
+  ],
+  "dependsOrder": "parallel"
+},
+    {
+      "label": "api-gateway",
+      "type": "shell",
+      "command": "cd api-gateway ; mvn spring-boot:run",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "appointment-service",
+      "type": "shell",
+      "command": "cd appointment-service ; mvn spring-boot:run",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "audit-service",
+      "type": "shell",
+      "command": "cd audit-service ; mvn spring-boot:run",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "auth-service",
+      "type": "shell",
+      "command": "cd auth-service ; mvn spring-boot:run",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "config-server",
+      "type": "shell",
+      "command": "cd config-server ; mvn spring-boot:run",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "doctor-service",
+      "type": "shell",
+      "command": "cd doctor-service ; mvn spring-boot:run",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "medical-record-service",
+      "type": "shell",
+      "command": "cd medical-record-service ; mvn spring-boot:run",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "patient-service",
+      "type": "shell",
+      "command": "cd patient-service ; mvn spring-boot:run",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "service-registry",
+      "type": "shell",
+      "command": "cd service-registry ; mvn spring-boot:run",
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}

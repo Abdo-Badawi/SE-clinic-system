@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: appointment-service
+  cloud:
+    config:
+      enabled: false
+      uri: http://config-server:8888
+      fail-fast: false

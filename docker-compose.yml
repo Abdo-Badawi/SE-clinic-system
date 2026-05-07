@@ -1,0 +1,194 @@
+version: '3.9'
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: clinic-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: clinic_db
+      MYSQL_USER: clinic_user
+      MYSQL_PASSWORD: clinic_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - clinic-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uclinic_user", "-pclinic_pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: auth-service
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      PATIENT_SERVICE_URL: http://patient-service:8082
+      DOCTOR_SERVICE_URL: http://doctor-service:8083
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - clinic-network
+    restart: unless-stopped
+
+  patient-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: patient-service
+    container_name: patient-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      AUTH_SERVICE_URL: http://auth-service:8081
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - clinic-network
+    restart: unless-stopped
+
+  doctor-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: doctor-service
+    container_name: doctor-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      AUTH_SERVICE_URL: http://auth-service:8081
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - clinic-network
+    restart: unless-stopped
+
+  appointment-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: appointment-service
+    container_name: appointment-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      PATIENT_SERVICE_URL: http://patient-service:8082
+      DOCTOR_SERVICE_URL: http://doctor-service:8083
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - clinic-network
+    restart: unless-stopped
+
+  medical-record-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: medical-record-service
+    container_name: medical-record-service
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      PATIENT_SERVICE_URL: http://patient-service:8082
+      DOCTOR_SERVICE_URL: http://doctor-service:8083
+      APPOINTMENT_SERVICE_URL: http://appointment-service:8084
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - clinic-network
+    restart: unless-stopped
+
+  audit-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: audit-service
+    container_name: audit-service
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: clinic_user
+      SPRING_DATASOURCE_PASSWORD: clinic_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - clinic-network
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+      args:
+        SERVICE_NAME: api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8081
+      PATIENT_SERVICE_URL: http://patient-service:8082
+      DOCTOR_SERVICE_URL: http://doctor-service:8083
+      APPOINTMENT_SERVICE_URL: http://appointment-service:8084
+      MEDICAL_RECORD_SERVICE_URL: http://medical-record-service:8085
+      AUDIT_SERVICE_URL: http://audit-service:8086
+    depends_on:
+      - auth-service
+      - patient-service
+      - doctor-service
+      - appointment-service
+      - medical-record-service
+      - audit-service
+    networks:
+      - clinic-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  clinic-network:
+    driver: bridge

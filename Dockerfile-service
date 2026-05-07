@@ -1,0 +1,44 @@
+# Stage 1: Build
+# Context is the project ROOT (SE-clinic-system/)
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
+
+WORKDIR /app
+
+# Copy root pom.xml (parent) and ALL module folders
+# Maven needs them all present even if we only build one
+COPY pom.xml .
+COPY common-library ./common-library
+COPY config-server ./config-server
+COPY service-registry ./service-registry
+COPY api-gateway ./api-gateway
+COPY auth-service ./auth-service
+COPY doctor-service ./doctor-service
+COPY patient-service ./patient-service
+COPY appointment-service ./appointment-service
+COPY medical-record-service ./medical-record-service
+COPY audit-service ./audit-service
+
+# Download dependencies (cached layer)
+RUN mvn dependency:go-offline -B
+
+# Build argument — which service to package
+ARG SERVICE_NAME
+
+# Build only the target service (and its local deps like common-library)
+RUN mvn clean package -DskipTests -B -pl ${SERVICE_NAME} -am
+
+# Stage 2: Run (lean image, no Maven/source)
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /app
+
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
+ARG SERVICE_NAME
+COPY --from=builder /app/${SERVICE_NAME}/target/*.jar app.jar
+
+RUN chown appuser:appgroup app.jar
+USER appuser
+
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom"
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
