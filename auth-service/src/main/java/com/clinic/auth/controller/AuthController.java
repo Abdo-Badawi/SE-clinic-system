@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.clinic.common.annotation.Auditable;
 
 import com.clinic.auth.service.AuthService;
 import com.clinic.auth.service.UserService;
@@ -39,6 +40,7 @@ public class AuthController {
     @PostMapping("/admin/users")
     @PreAuthorize("hasRole('ADMIN')")
     @Loggable
+    @Auditable(action = "ADMIN_CREATE_USER", entityType = "User")
     public ResponseEntity<JwtResponse> createUser(@Valid @RequestBody RegisterRequest request) {
         if (request.getRole() == null || request.getRole().isBlank()) {
             throw new BadRequestException("Role is required for admin user creation");
@@ -47,10 +49,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-public ResponseEntity<JwtResponse> register(@Valid @RequestBody RegisterRequest request) {
-    request.setRole("PATIENT");
-    return ResponseEntity.ok(authService.register(request));
-}
+    @Auditable(action = "REGISTER_USER", entityType = "User")
+    public ResponseEntity<JwtResponse> register(@Valid @RequestBody RegisterRequest request) {
+        request.setRole("PATIENT");
+        return ResponseEntity.ok(authService.register(request));
+    }
 
     @GetMapping("/validate")
     public ResponseEntity<Void> validateToken(@RequestHeader("Authorization") String authHeader) {

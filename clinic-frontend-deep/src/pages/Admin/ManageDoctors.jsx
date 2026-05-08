@@ -3,7 +3,6 @@ import api from '../../api';
 
 export default function ManageDoctors() {
   const [doctors, setDoctors] = useState([]);
-  const [newDoctor, setNewDoctor] = useState({ userId: '', specialization: '' });
   const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({});
   const [error, setError] = useState('');
@@ -19,27 +18,7 @@ export default function ManageDoctors() {
     }
   };
 
-  useEffect(() => {
-    fetchDoctors();
-  }, []);
-
-  // Create new doctor
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    try {
-      await api.post('/api/doctors', {
-        userId: parseInt(newDoctor.userId, 10),
-        specialization: newDoctor.specialization,
-      });
-      setNewDoctor({ userId: '', specialization: '' });
-      setSuccess('Doctor created successfully!');
-      fetchDoctors();
-    } catch (err) {
-      setError(err.response?.data?.message || 'Creation failed');
-    }
-  };
+  useEffect(() => { fetchDoctors(); }, []);
 
   // Start editing
   const handleEditStart = (doctor) => {
@@ -49,14 +28,10 @@ export default function ManageDoctors() {
 
   // Save edit
   const handleEditSave = async (id) => {
-    setError('');
-    setSuccess('');
     try {
-      await api.put(`/api/doctors/${id}`, {
-        specialization: editData.specialization,
-      });
-      setEditId(null);
+      await api.put(`/api/doctors/${id}`, { specialization: editData.specialization });
       setSuccess('Doctor updated!');
+      setEditId(null);
       fetchDoctors();
     } catch (err) {
       setError(err.response?.data?.message || 'Update failed');
@@ -64,15 +39,11 @@ export default function ManageDoctors() {
   };
 
   // Cancel edit
-  const handleEditCancel = () => {
-    setEditId(null);
-  };
+  const handleEditCancel = () => setEditId(null);
 
-  // Soft‑delete (deactivate)
+  // Deactivate doctor
   const handleDeactivate = async (id) => {
-    if (!window.confirm('Deactivate this doctor? This will disable their account.')) return;
-    setError('');
-    setSuccess('');
+    if (!window.confirm('Deactivate this doctor?')) return;
     try {
       await api.delete(`/api/doctors/${id}`);
       setSuccess('Doctor deactivated.');
@@ -88,37 +59,6 @@ export default function ManageDoctors() {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}
 
-      {/* Create New Doctor */}
-      <details>
-        <summary>➕ Create New Doctor Profile</summary>
-        <form onSubmit={handleCreate} style={{ display: 'grid', gap: '0.5rem', maxWidth: 400, marginTop: '1rem' }}>
-          <label>
-            User ID (from users table):
-            <input
-              type="number"
-              value={newDoctor.userId}
-              onChange={e => setNewDoctor({ ...newDoctor, userId: e.target.value })}
-              required
-              style={{ width: '100%' }}
-            />
-          </label>
-          <label>
-            Specialization:
-            <input
-              type="text"
-              value={newDoctor.specialization}
-              onChange={e => setNewDoctor({ ...newDoctor, specialization: e.target.value })}
-              required
-              style={{ width: '100%' }}
-            />
-          </label>
-          <button type="submit">Create Doctor</button>
-        </form>
-      </details>
-
-      <hr />
-
-      {/* Doctor List */}
       {doctors.length === 0 ? (
         <p>No doctors found.</p>
       ) : (
@@ -126,6 +66,7 @@ export default function ManageDoctors() {
           <thead>
             <tr style={{ backgroundColor: '#f0f0f0' }}>
               <th>ID</th>
+              <th>Name</th>
               <th>Specialization</th>
               <th>Active</th>
               <th>Actions</th>
@@ -135,16 +76,11 @@ export default function ManageDoctors() {
             {doctors.map((doc) => (
               <tr key={doc.id}>
                 {editId === doc.id ? (
-                  // Editable row
                   <>
                     <td>{doc.id}</td>
+                    <td>{doc.fullName}</td>
                     <td>
-                      <input
-                        type="text"
-                        value={editData.specialization}
-                        onChange={e => setEditData({ ...editData, specialization: e.target.value })}
-                        style={{ width: '100%' }}
-                      />
+                      <input value={editData.specialization} onChange={e => setEditData({...editData, specialization: e.target.value})} />
                     </td>
                     <td>{doc.isActive ? 'Yes' : 'No'}</td>
                     <td>
@@ -153,17 +89,15 @@ export default function ManageDoctors() {
                     </td>
                   </>
                 ) : (
-                  // Display row
                   <>
                     <td>{doc.id}</td>
+                    <td>{doc.fullName}</td>
                     <td>{doc.specialization}</td>
                     <td>{doc.isActive ? 'Yes' : 'No'}</td>
                     <td>
                       <button onClick={() => handleEditStart(doc)}>Edit</button>
                       {doc.isActive && (
-                        <button onClick={() => handleDeactivate(doc.id)} style={{ marginLeft: '0.5rem' }}>
-                          Deactivate
-                        </button>
+                        <button onClick={() => handleDeactivate(doc.id)}>Deactivate</button>
                       )}
                     </td>
                   </>

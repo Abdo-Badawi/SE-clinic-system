@@ -12,7 +12,7 @@ import com.clinic.patient.repository.PatientRepository;
 import com.clinic.patient.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+import java.time.LocalDate; 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -27,34 +27,41 @@ public class PatientServiceImpl implements PatientService {
     private final AuthClient authClient;
 
     @Override
-    @Transactional
-    @Loggable
-    public PatientResponse createPatient(CreatePatientRequest request) {
-        // Validate user exists in auth-service
-        // try {
-        //     authClient.getUserById(request.getUserId());
-        // } catch (Exception e) {
-        //     log.error("User with ID {} not found in auth-service", request.getUserId());
-        //     throw new BadRequestException("User with ID " + request.getUserId() + " does not exist.");
-        // }
+@Transactional
+@Loggable
+public PatientResponse createPatient(CreatePatientRequest request) {
+    // Optional: validate user exists
+    // try { authClient.getUserById(request.getUserId()); } catch ...
 
-        if (patientRepository.existsById(request.getUserId())) {
+    if (patientRepository.existsById(request.getUserId())) {
         throw new BadRequestException("Patient profile already exists for user ID: " + request.getUserId());
     }
 
-        Patient patient = Patient.builder()
-                .id(request.getUserId())
-                .dateOfBirth(request.getDateOfBirth())
-                .phone(request.getPhone())
-                .address(request.getAddress())
-                .emergencyContact(request.getEmergencyContact())
-                .medicalSummary(request.getMedicalSummary())
-                .build();
+    Patient patient = Patient.builder()
+            .id(request.getUserId())
+            .dateOfBirth(request.getDateOfBirth() != null
+                    ? LocalDate.parse(request.getDateOfBirth())
+                    : null)
+            .phone(request.getPhone())
+            .address(request.getAddress())
+            .emergencyContact(request.getEmergencyContact())
+            .medicalSummary(request.getMedicalSummary())
+            .build();
 
-        Patient savedPatient = patientRepository.save(patient);
-        log.info("Patient profile created for user ID: {}", savedPatient.getId());
-        return mapToResponse(savedPatient);
-    }
+    Patient saved = patientRepository.save(patient);
+    log.info("Patient profile created for user ID: {}", saved.getId());
+
+    return PatientResponse.builder()
+            .id(saved.getId())
+            .dateOfBirth(saved.getDateOfBirth())
+            .phone(saved.getPhone())
+            .address(saved.getAddress())
+            .emergencyContact(saved.getEmergencyContact())
+            .medicalSummary(saved.getMedicalSummary())
+            .createdAt(saved.getCreatedAt())
+            .updatedAt(saved.getUpdatedAt())
+            .build();
+}
 
     @Override
     public PatientResponse getPatientById(Long id) {

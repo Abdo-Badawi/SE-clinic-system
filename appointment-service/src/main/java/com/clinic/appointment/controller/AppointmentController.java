@@ -7,6 +7,8 @@ import com.clinic.appointment.dto.request.UpdateAppointmentStatusRequest;
 import com.clinic.appointment.dto.response.AppointmentResponse;
 import com.clinic.appointment.dto.response.AvailableSlotResponse;
 import com.clinic.appointment.service.AppointmentService;
+import com.clinic.common.annotation.Auditable;
+
 import com.clinic.common.annotation.Loggable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -31,6 +33,7 @@ public class AppointmentController {
     @Loggable
     // @PreAuthorize("hasRole('RECEPTIONIST') or hasRole('ADMIN') or
     // hasRole('PATIENT')")
+    @Auditable(action = "BOOK_APPOINTMENT", entityType = "Appointment")
     public ResponseEntity<AppointmentResponse> createAppointment(
             @Valid @RequestBody AppointmentRequest request,
             HttpServletRequest httpRequest) {
@@ -86,6 +89,7 @@ public ResponseEntity<List<AppointmentResponse>> getAppointmentsByDoctor(
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('RECEPTIONIST') or hasRole('ADMIN') or hasRole('DOCTOR')")
+    @Auditable(action = "UPDATE_APPOINTMENT_STATUS", entityType = "Appointment")
     public ResponseEntity<AppointmentResponse> updateAppointmentStatus(
             @PathVariable("id") Long id,
             @Valid @RequestBody UpdateAppointmentStatusRequest request,
@@ -96,6 +100,7 @@ public ResponseEntity<List<AppointmentResponse>> getAppointmentsByDoctor(
 
     @PutMapping("/{id}/cancel")
     @PreAuthorize("hasRole('RECEPTIONIST') or hasRole('ADMIN') or hasRole('PATIENT')")
+    @Auditable(action = "CANCEL_APPOINTMENT", entityType = "Appointment")
     public ResponseEntity<AppointmentResponse> cancelAppointment(
             @PathVariable("id") Long id,
             @Valid @RequestBody CancelAppointmentRequest request,
@@ -112,6 +117,7 @@ public ResponseEntity<List<AppointmentResponse>> getAppointmentsByDoctor(
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('RECEPTIONIST') or hasRole('ADMIN')")
+    @Auditable(action = "DELETE_APPOINTMENT", entityType = "Appointment")
     public ResponseEntity<Void> deleteAppointment(@PathVariable("id") Long id) {
         appointmentService.deleteAppointment(id);
         return ResponseEntity.noContent().build();

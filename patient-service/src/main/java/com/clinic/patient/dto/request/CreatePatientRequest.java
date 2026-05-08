@@ -15,8 +15,12 @@ import java.time.LocalDate;
 public class CreatePatientRequest {
     @NotNull
     private Long userId;
-
-    private LocalDate dateOfBirth;
+    @NotNull
+    private String email;
+    @NotNull
+    private String fullName;
+    private String dateOfBirth;
+    @NotNull
     private String phone;
     private String address;
     private String emergencyContact;

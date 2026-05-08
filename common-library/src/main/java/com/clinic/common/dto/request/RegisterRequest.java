@@ -29,7 +29,10 @@ public class RegisterRequest {
      private String role;
     
     // Additional fields based on role
+     private String dateOfBirth;          // format YYYY-MM-DD
     private String phone;
     private String address;
+    private String emergencyContact;
+    private String medicalSummary;
     private String specialization; // for DOCTOR role
 }

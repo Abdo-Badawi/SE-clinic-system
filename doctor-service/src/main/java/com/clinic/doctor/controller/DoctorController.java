@@ -1,5 +1,6 @@
 package com.clinic.doctor.controller;
 
+import com.clinic.common.annotation.Auditable;
 import com.clinic.common.annotation.Loggable;
 import com.clinic.doctor.dto.request.CreateDoctorRequest;
 import com.clinic.doctor.dto.request.UpdateDoctorRequest;
@@ -22,6 +23,7 @@ public class DoctorController {
 
     @PostMapping
     @Loggable
+    @Auditable(action = "CREATE_DOCTOR", entityType = "Doctor")
     public ResponseEntity<DoctorResponse> createDoctor(@Valid @RequestBody CreateDoctorRequest request) {
         return new ResponseEntity<>(doctorService.createDoctor(request), HttpStatus.CREATED);
     }
@@ -32,11 +34,14 @@ public class DoctorController {
     }
 
     @GetMapping
+    @Auditable(action = "VIEW_ALL_DOCTORS", entityType = "Doctor")
     public ResponseEntity<List<DoctorResponse>> getAllDoctors() {
         return ResponseEntity.ok(doctorService.getAllDoctors());
     }
 
     @PutMapping("/{id}")
+    @Auditable(action = "UPDATE_DOCTOR", entityType = "Doctor")
+    
     public ResponseEntity<DoctorResponse> updateDoctor(
             @PathVariable("id") Long id,
             @Valid @RequestBody UpdateDoctorRequest request) {
@@ -44,6 +49,7 @@ public class DoctorController {
     }
 
     @DeleteMapping("/{id}")
+    @Auditable(action = "DEACTIVATE_DOCTOR", entityType = "Doctor")
     public ResponseEntity<Void> deleteDoctor(@PathVariable("id") Long id) {
         doctorService.deleteDoctor(id);
         return ResponseEntity.noContent().build();

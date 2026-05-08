@@ -3,17 +3,10 @@ import api from '../../api';
 
 export default function ManagePatients() {
   const [patients, setPatients] = useState([]);
-  const [newPatient, setNewPatient] = useState({
-    userId: '',
-    dateOfBirth: '',
-    phone: '',
-    address: '',
-    emergencyContact: '',
-    medicalSummary: '',
-  });
   const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({});
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   // Fetch all patients
   const fetchPatients = async () => {
@@ -27,26 +20,7 @@ export default function ManagePatients() {
 
   useEffect(() => { fetchPatients(); }, []);
 
-  // Create new patient
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post('/api/patients', {
-        userId: parseInt(newPatient.userId),
-        dateOfBirth: newPatient.dateOfBirth,
-        phone: newPatient.phone,
-        address: newPatient.address,
-        emergencyContact: newPatient.emergencyContact,
-        medicalSummary: newPatient.medicalSummary,
-      });
-      setNewPatient({ userId: '', dateOfBirth: '', phone: '', address: '', emergencyContact: '', medicalSummary: '' });
-      fetchPatients();
-    } catch (err) {
-      setError(err.response?.data?.message || 'Creation failed');
-    }
-  };
-
-  // Start editing a patient
+  // Start editing
   const handleEditStart = (patient) => {
     setEditId(patient.id);
     setEditData({
@@ -57,15 +31,11 @@ export default function ManagePatients() {
     });
   };
 
-  // Save edited patient
+  // Save edit
   const handleEditSave = async (id) => {
     try {
-      await api.put(`/api/patients/${id}`, {
-        phone: editData.phone,
-        address: editData.address,
-        emergencyContact: editData.emergencyContact,
-        medicalSummary: editData.medicalSummary,
-      });
+      await api.put(`/api/patients/${id}`, editData);
+      setSuccess('Patient updated!');
       setEditId(null);
       fetchPatients();
     } catch (err) {
@@ -78,6 +48,7 @@ export default function ManagePatients() {
     if (!window.confirm('Permanently delete this patient?')) return;
     try {
       await api.delete(`/api/patients/${id}`);
+      setSuccess('Patient deleted.');
       fetchPatients();
     } catch (err) {
       setError(err.response?.data?.message || 'Delete failed');
@@ -88,34 +59,18 @@ export default function ManagePatients() {
     <div>
       <h2>Manage Patients</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {success && <p style={{ color: 'green' }}>{success}</p>}
 
-      {/* Create New Patient Form */}
-      <details>
-        <summary>Create New Patient Profile</summary>
-        <form onSubmit={handleCreate} style={{ display: 'grid', gap: '0.5rem', maxWidth: 400 }}>
-          <input placeholder="User ID" value={newPatient.userId} onChange={e => setNewPatient({...newPatient, userId: e.target.value})} required />
-          <input type="date" placeholder="Date of Birth" value={newPatient.dateOfBirth} onChange={e => setNewPatient({...newPatient, dateOfBirth: e.target.value})} />
-          <input placeholder="Phone" value={newPatient.phone} onChange={e => setNewPatient({...newPatient, phone: e.target.value})} />
-          <input placeholder="Address" value={newPatient.address} onChange={e => setNewPatient({...newPatient, address: e.target.value})} />
-          <input placeholder="Emergency Contact" value={newPatient.emergencyContact} onChange={e => setNewPatient({...newPatient, emergencyContact: e.target.value})} />
-          <textarea placeholder="Medical Summary" value={newPatient.medicalSummary} onChange={e => setNewPatient({...newPatient, medicalSummary: e.target.value})} />
-          <button type="submit">Create Patient</button>
-        </form>
-      </details>
-
-      <hr />
-
-      {/* Patient List with Edit/Delete */}
-      <table border="1" cellPadding="5" style={{ marginTop: '1rem' }}>
+      {/* Patient List */}
+      <table border="1" cellPadding="5" style={{ marginTop: '1rem', width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
             <th>ID</th>
-            <th>User ID</th>
             <th>DOB</th>
             <th>Phone</th>
             <th>Address</th>
-            <th>Emergency Contact</th>
-            <th>Medical Summary</th>
+            <th>Emergency</th>
+            <th>Summary</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -123,10 +78,8 @@ export default function ManagePatients() {
           {patients.map((p) => (
             <tr key={p.id}>
               {editId === p.id ? (
-                // Editable row
                 <>
                   <td>{p.id}</td>
-                  <td>{p.userId}</td>
                   <td>{p.dateOfBirth}</td>
                   <td><input value={editData.phone} onChange={e => setEditData({...editData, phone: e.target.value})} /></td>
                   <td><input value={editData.address} onChange={e => setEditData({...editData, address: e.target.value})} /></td>
@@ -138,10 +91,8 @@ export default function ManagePatients() {
                   </td>
                 </>
               ) : (
-                // Display row
                 <>
                   <td>{p.id}</td>
-                  <td>{p.userId}</td>
                   <td>{p.dateOfBirth}</td>
                   <td>{p.phone}</td>
                   <td>{p.address}</td>
