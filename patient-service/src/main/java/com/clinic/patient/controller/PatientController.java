@@ -1,5 +1,6 @@
 package com.clinic.patient.controller;
 
+import com.clinic.common.annotation.Auditable;
 import com.clinic.common.annotation.Loggable;
 import com.clinic.patient.dto.request.CreatePatientRequest;
 import com.clinic.patient.dto.request.UpdatePatientRequest;
@@ -28,11 +29,13 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
+
     public ResponseEntity<PatientResponse> getPatientById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(patientService.getPatientById(id));
     }
 
     @PutMapping("/{id}")
+    @Auditable(action = "UPDATE_PATIENT", entityType = "Patient")
     public ResponseEntity<PatientResponse> updatePatient(
             @PathVariable("id") Long id,
             @Valid @RequestBody UpdatePatientRequest request) {
@@ -40,6 +43,7 @@ public class PatientController {
     }
 
     @DeleteMapping("/{id}")
+    @Auditable(action = "DELETE_PATIENT", entityType = "Patient")
     public ResponseEntity<Void> deletePatient(@PathVariable("id") Long id) {
         patientService.deletePatient(id);
         return ResponseEntity.noContent().build();
