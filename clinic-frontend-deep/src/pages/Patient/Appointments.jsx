@@ -61,6 +61,7 @@ export default function PatientAppointments() {
     }
   };
 
+  // ✅ Cancel with JSON body
   const cancelAppointment = async (id) => {
     const reason = cancelReason[id] || '';
     if (!reason) {
@@ -70,9 +71,11 @@ export default function PatientAppointments() {
     setError('');
     setSuccess('');
     try {
-      await api.put(`/api/appointments/${id}/cancel?reason=${encodeURIComponent(reason)}`);
+      // Send reason as JSON body
+      await api.put(`/api/appointments/${id}/cancel`, { reason });
       setSuccess('Appointment cancelled');
       setShowCancelInput(null);
+      setCancelReason(prev => ({ ...prev, [id]: '' }));
       const { data } = await api.get(`/api/appointments/patient/${patientId}`);
       setAppointments(data);
     } catch (err) {
@@ -81,15 +84,15 @@ export default function PatientAppointments() {
   };
 
   return (
-    <div>
+    <div className="page-container">
       <h2>My Appointments</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
 
       {/* Book Appointment */}
-      <details style={{ marginBottom: '1rem' }}>
+      <details className="section">
         <summary>📝 Book New Appointment</summary>
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', marginTop: '1rem' }}>
           <select value={bookDoctor} onChange={e => setBookDoctor(e.target.value)}>
             <option value="">-- Select Doctor --</option>
             {doctors.map(doc => (
@@ -100,7 +103,7 @@ export default function PatientAppointments() {
           <button onClick={fetchSlots}>Show Slots</button>
         </div>
         {slots.length > 0 && (
-          <div>
+          <div style={{ marginTop: '1rem' }}>
             <strong>Free slots:</strong>
             <ul>
               {slots.map((s, idx) => (
@@ -116,9 +119,9 @@ export default function PatientAppointments() {
 
       {/* Appointments List */}
       {appointments.length === 0 ? (
-        <p>No appointments.</p>
+        <p>No appointments found.</p>
       ) : (
-        <table border="1" cellPadding="5" style={{ borderCollapse: 'collapse', width: '100%' }}>
+        <table>
           <thead>
             <tr>
               <th>ID</th>

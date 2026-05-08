@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 
 export default function PatientDashboard() {
   return (
-    <div>
+    <div className="page-container">
       <Navbar />
       <h1>Patient Panel</h1>
       <nav style={{ marginBottom: '1rem' }}>

@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 
 export default function ReceptionistDashboard() {
   return (
-    <div>
+    <div  className="page-container">
       <Navbar />
       <h1>Receptionist Panel</h1>
       <nav style={{ marginBottom: '1rem' }}>

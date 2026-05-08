@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 
 export default function AdminDashboard() {
   return (
-    <div>
+    <div className="page-container"> 
       <Navbar />
       <h1>Admin Panel</h1>
       <nav>

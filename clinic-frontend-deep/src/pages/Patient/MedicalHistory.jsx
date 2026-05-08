@@ -16,13 +16,13 @@ export default function MedicalHistory() {
   }, [patientId]);
 
   return (
-    <div>
+    <div className="page-container">
       <h2>Medical History</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
       {records.length === 0 ? (
         <p>No medical records found.</p>
       ) : (
-        <table border="1" cellPadding="5" style={{ borderCollapse: 'collapse', width: '100%' }}>
+        <table>
           <thead>
             <tr>
               <th>ID</th>

@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 
 export default function DoctorDashboard() {
   return (
-    <div>
+    <div className="page-container">
       <Navbar />
       <h1>Doctor Dashboard</h1>
       <nav>

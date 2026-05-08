@@ -1,18 +1,10 @@
 import { useState, useEffect } from 'react';
 import api from '../../api';
 
-export default function Patients() {
+export default function ReceptionistPatients() {
   const [patients, setPatients] = useState([]);
   const [searchId, setSearchId] = useState('');
   const [selectedPatient, setSelectedPatient] = useState(null);
-  const [newPatient, setNewPatient] = useState({
-    userId: '',
-    dateOfBirth: '',
-    phone: '',
-    address: '',
-    emergencyContact: '',
-    medicalSummary: '',
-  });
   const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({});
   const [error, setError] = useState('');
@@ -29,6 +21,8 @@ export default function Patients() {
     }
   };
 
+  useEffect(() => { fetchAllPatients(); }, []);
+
   // Search patient by ID
   const searchPatient = async () => {
     if (!searchId) return;
@@ -40,31 +34,6 @@ export default function Patients() {
     } catch (err) {
       setError(err.response?.data?.message || 'Patient not found');
       setSelectedPatient(null);
-    }
-  };
-
-  // Create new patient
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    try {
-      await api.post('/api/patients', {
-        userId: parseInt(newPatient.userId),
-        dateOfBirth: newPatient.dateOfBirth,
-        phone: newPatient.phone,
-        address: newPatient.address,
-        emergencyContact: newPatient.emergencyContact,
-        medicalSummary: newPatient.medicalSummary,
-      });
-      setSuccess('Patient created successfully!');
-      setNewPatient({
-        userId: '', dateOfBirth: '', phone: '', address: '',
-        emergencyContact: '', medicalSummary: '',
-      });
-      fetchAllPatients();
-    } catch (err) {
-      setError(err.response?.data?.message || 'Creation failed');
     }
   };
 
@@ -101,69 +70,74 @@ export default function Patients() {
     }
   };
 
-  return (
-    <div>
-      <h2>Patient Management</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+  // Delete patient (optional – depends on role, but we keep it)
+  const handleDelete = async (id) => {
+    if (!window.confirm('Permanently delete this patient?')) return;
+    setError('');
+    setSuccess('');
+    try {
+      await api.delete(`/api/patients/${id}`);
+      setSuccess('Patient deleted.');
+      fetchAllPatients();
+      if (selectedPatient && selectedPatient.id === id) setSelectedPatient(null);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Delete failed');
+    }
+  };
 
-      {/* Create New Patient */}
-      <details>
-        <summary>➕ Create New Patient Profile</summary>
-        <form onSubmit={handleCreate} style={{ display: 'grid', gap: '0.5rem', maxWidth: 400, marginTop: '1rem' }}>
-          <input type="number" placeholder="User ID" value={newPatient.userId}
-            onChange={e => setNewPatient({...newPatient, userId: e.target.value})} required />
-          <input type="date" placeholder="Date of Birth" value={newPatient.dateOfBirth}
-            onChange={e => setNewPatient({...newPatient, dateOfBirth: e.target.value})} />
-          <input placeholder="Phone" value={newPatient.phone}
-            onChange={e => setNewPatient({...newPatient, phone: e.target.value})} />
-          <input placeholder="Address" value={newPatient.address}
-            onChange={e => setNewPatient({...newPatient, address: e.target.value})} />
-          <input placeholder="Emergency Contact" value={newPatient.emergencyContact}
-            onChange={e => setNewPatient({...newPatient, emergencyContact: e.target.value})} />
-          <textarea placeholder="Medical Summary" value={newPatient.medicalSummary}
-            onChange={e => setNewPatient({...newPatient, medicalSummary: e.target.value})} />
-          <button type="submit">Create Patient</button>
-        </form>
-      </details>
+  return (
+    <div className="page-container">
+      <h2>Patient Management</h2>
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+
+      {/* ===== CREATE FORM REMOVED ===== */}
 
       {/* Search by ID */}
-      <div style={{ marginTop: '1rem' }}>
-        <input type="number" placeholder="Search Patient by ID" value={searchId}
-          onChange={e => setSearchId(e.target.value)} />
+      <div style={{ marginBottom: '1rem' }}>
+        <input
+          type="number"
+          placeholder="Search Patient by ID"
+          value={searchId}
+          onChange={e => setSearchId(e.target.value)}
+          style={{ width: '200px', marginRight: '0.5rem' }}
+        />
         <button onClick={searchPatient}>Search</button>
         <button onClick={fetchAllPatients} style={{ marginLeft: '0.5rem' }}>List All</button>
       </div>
 
       {/* Display searched patient */}
       {selectedPatient && (
-        <div style={{ marginTop: '1rem', border: '1px solid #ccc', padding: '1rem' }}>
-          <h4>Patient Details (ID: {selectedPatient.id})</h4>
+        <div className="section" style={{ marginBottom: '1.5rem' }}>
+          <h3>Patient Details (ID: {selectedPatient.id})</h3>
           {editId === selectedPatient.id ? (
-            <div>
-              <input value={editData.phone} onChange={e => setEditData({...editData, phone: e.target.value})} />
-              <input value={editData.address} onChange={e => setEditData({...editData, address: e.target.value})} />
-              <input value={editData.emergencyContact} onChange={e => setEditData({...editData, emergencyContact: e.target.value})} />
-              <textarea value={editData.medicalSummary} onChange={e => setEditData({...editData, medicalSummary: e.target.value})} />
-              <button onClick={() => handleEditSave(selectedPatient.id)}>Save</button>
-              <button onClick={() => setEditId(null)}>Cancel</button>
+            <div style={{ display: 'grid', gap: '0.5rem', maxWidth: 400 }}>
+              <input value={editData.phone} onChange={e => setEditData({...editData, phone: e.target.value})} placeholder="Phone" />
+              <input value={editData.address} onChange={e => setEditData({...editData, address: e.target.value})} placeholder="Address" />
+              <input value={editData.emergencyContact} onChange={e => setEditData({...editData, emergencyContact: e.target.value})} placeholder="Emergency Contact" />
+              <textarea value={editData.medicalSummary} onChange={e => setEditData({...editData, medicalSummary: e.target.value})} placeholder="Medical Summary" />
+              <div>
+                <button onClick={() => handleEditSave(selectedPatient.id)}>Save</button>
+                <button onClick={() => setEditId(null)}>Cancel</button>
+              </div>
             </div>
           ) : (
-            <div>
-              <p>DOB: {selectedPatient.dateOfBirth}</p>
-              <p>Phone: {selectedPatient.phone}</p>
-              <p>Address: {selectedPatient.address}</p>
-              <p>Emergency: {selectedPatient.emergencyContact}</p>
-              <p>Summary: {selectedPatient.medicalSummary}</p>
+            <>
+              <p><strong>DOB:</strong> {selectedPatient.dateOfBirth}</p>
+              <p><strong>Phone:</strong> {selectedPatient.phone}</p>
+              <p><strong>Address:</strong> {selectedPatient.address}</p>
+              <p><strong>Emergency:</strong> {selectedPatient.emergencyContact}</p>
+              <p><strong>Summary:</strong> {selectedPatient.medicalSummary}</p>
               <button onClick={() => handleEditStart(selectedPatient)}>Edit</button>
-            </div>
+              <button onClick={() => handleDelete(selectedPatient.id)} style={{ marginLeft: '0.5rem' }}>Delete</button>
+            </>
           )}
         </div>
       )}
 
       {/* All Patients Table */}
       {patients.length > 0 && (
-        <table border="1" cellPadding="5" style={{ marginTop: '1rem', width: '100%', borderCollapse: 'collapse' }}>
+        <table>
           <thead>
             <tr>
               <th>ID</th>
@@ -199,7 +173,10 @@ export default function Patients() {
                     <td>{p.address}</td>
                     <td>{p.emergencyContact}</td>
                     <td>{p.medicalSummary}</td>
-                    <td><button onClick={() => handleEditStart(p)}>Edit</button></td>
+                    <td>
+                      <button onClick={() => handleEditStart(p)}>Edit</button>
+                      <button onClick={() => handleDelete(p.id)}>Delete</button>
+                    </td>
                   </>
                 )}
               </tr>
