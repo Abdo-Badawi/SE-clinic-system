@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080',   // API Gateway
+  // VITE_API_URL is injected at build time via `--build-arg VITE_API_URL=...`
+  // Falls back to localhost:8080 for local `npm run dev` usage.
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
   headers: { 'Content-Type': 'application/json' },
 });
 

@@ -186,6 +186,25 @@ services:
       - clinic-network
     restart: unless-stopped
 
+  # ── Frontend ────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./clinic-frontend-deep       # path to the React project folder
+      dockerfile: Dockerfile                 # the Dockerfile we created
+      args:
+        # The browser calls this URL, so it must be reachable from the
+        # user's machine — not the Docker-internal hostname.
+        # Change to your server IP / domain if deploying remotely.
+        VITE_API_URL: http://localhost:8080
+    container_name: clinic-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - clinic-network
+    restart: unless-stopped
+
 volumes:
   mysql_data:
 
